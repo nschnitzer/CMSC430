@@ -1,0 +1,13 @@
+What's different about this compiler is that this language
+will have side effects
+
+Previous Compiler: Dodger
+Next Compiler: Extort
+
+
+* Reason to change the runtime:
+    - Need to be able to read input
+    - If we dont want to implement in assembly, we have to implement it in the runtime
+
+Defn: Mashalling
+  Converting integer representations between the runtime language and our language
