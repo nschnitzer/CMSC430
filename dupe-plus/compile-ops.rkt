@@ -15,8 +15,6 @@
           (Mov rax (value->bits #f))
           (Mov r9  (value->bits #t))
           (Cmove rax r9))]
-    ;; TODO: Handle abs
-    ;; TODO: Handle - 
     ['abs 
       (let ((neg (gensym 'abs))
             (pos (gensym 'abs)))
@@ -25,20 +23,18 @@
               (Jmp pos)
               (Label neg)
               (flip-sign)
-              (Label pos)
-                      ))]
-      ['- (flip-sign)]
+              (Label pos)))]
+    ['- (flip-sign)]
     ['not (let ((ret_true (gensym 'not))
                 (ret_val (gensym 'not)))
             (seq  (Mov r9 (value->bits #f))
                   (Cmp rax r9)
                   (Je ret_true)
-                  (Mov rax (value->bits #t))
+                  (Mov rax (value->bits #f))
                   (Jmp ret_val)
                   (Label ret_true)
-                  (Mov rax r9)
-                  (Label ret_val)
-                ))]))
+                  (Mov rax (value->bits #t))
+                  (Label ret_val)))]))
 
 (define (flip-sign)
   (seq (Mov r9 (value->bits 0))
