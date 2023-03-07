@@ -9,6 +9,7 @@
     [(Prim1 op e) (interp-prim op (interp e))]
     ))
 
+; Op Integer -> Integer
 (define (interp-prim op i)
   (match op
     ['add1 (+ i 1)]

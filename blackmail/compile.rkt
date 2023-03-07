@@ -25,8 +25,3 @@
 ;; Integer -> Asm
 (define (compile-integer i)
   (seq (Mov 'rax i)))
-
-(define (compile-prim p e)
-  (match p
-    ['add1 (seq (compile-e e) (Add 'rax 1))]
-    ['sub1 (seq (compile-e e) (Sub 'rax 1))]))

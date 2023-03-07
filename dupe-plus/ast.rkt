@@ -10,7 +10,7 @@
 ;; | (If Expr Expr Expr)
 ;;
 ;; type Op = 'add1 | 'sub1 | 'zero? | abs | - | not
-;type Datum = Integer | Boolean
+; type Datum = Integer | Boolean
 
 ; | (Cond [Listof CondClause] Expr)
 ; | (Case Expr [Listof CaseClause] Expr)

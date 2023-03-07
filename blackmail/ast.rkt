@@ -5,6 +5,6 @@
 ;; | (Int Integer)
 ;; | (Prim1 Op Expr)
 ;; type Op = 'add1 | 'sub1
-(struct Int (i)   #:prefab)
+(struct Int (i)     #:prefab)
 (struct Prim1 (p e) #:prefab)
 

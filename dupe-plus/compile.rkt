@@ -28,7 +28,6 @@
 
 ;; Op1 Expr -> Asm
 (define (compile-prim1 p e)
-  ;; TODO: Update compile-op1 to handle abs, -, and not
   (seq (compile-e e)
        (compile-op1 p)))
 

@@ -11,7 +11,7 @@
 ;; | Eof
 ;; | Void
 
-;; type Env = (Listof (List Id Value))
+;; type Env = (Listof (List Id Value) )
 
 ;; Expr -> Answer
 (define (interp e)
@@ -56,9 +56,9 @@
 (define (lookup r x)
   (match r
     [(cons (list y val) r)
-     (if (symbol=? x y)
-         val
-         (lookup r x))]))
+        (if (symbol=? x y)
+             val
+             (lookup r x))]))
 
 ;; Env Id Value -> Env
 (define (ext r x v)

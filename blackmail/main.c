@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <inttypes.h>
+#include "print.h"
 
-int64_t nice();
+int64_t entry();
 
-int main(int argc, char** argv) {
-  int64_t val;
-  val = nice();
-  
-  printf("%" PRId64 "\n", val);
+int main(int argc, char** argv)
+{
+  int64_t result;
+
+  result = entry();
+  print_result(result);
+  putchar('\n');
   return 0;
 }

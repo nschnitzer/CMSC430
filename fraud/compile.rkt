@@ -86,7 +86,7 @@
   (seq (compile-e e1 c)
        (Push rax)
        (compile-e e2 (cons x c))
-       (Add rsp 8)))
+       (Add rsp 8))) ;; Moves the stack pointer over
 
 ;; Id CEnv -> Integer
 (define (lookup x cenv)
@@ -95,4 +95,4 @@
     [(cons y rest)
      (match (eq? x y)
        [#t 0]
-       [#f (+ 8 (lookup x rest))])]))
+       [#f (+ 8 (lookup x rest))])])) ;; + 8 b/c it needs to move the stack pointer over

@@ -64,6 +64,30 @@
 (define assert-char
   (assert-type mask-char type-char))
 
+; Bits Bits Register -> asm
+; Basically the same as assert-type except it
+; raises an error if the types match
+(define (assert-bool-helper mask type reg)
+  (seq  (Mov r9 reg)
+        (And r9 mask)
+        (Cmp r9 type)
+        (Je  'err)))
+
+; Register -> asm
+; Checks if the value in the register is a Boolean. Raises error if not.
+; First checks if int or char since they have bit masks.
+; Then compares the bits directly to the 2 boolean values.
+(define (assert-bool reg)
+  (let ((goodBool (gensym 'assertBool)))
+    (seq  (assert-bool-helper mask-int type-int reg)
+          (assert-bool-helper mask-char type-char reg)
+          (Cmp reg val-true)
+          (Je goodBool)
+          (Cmp reg val-false)
+          (Je goodBool)
+          (Jmp 'err)
+          (Label goodBool))))
+
 (define (assert-codepoint)
   (let ((ok (gensym)))
     (seq (assert-integer rax)

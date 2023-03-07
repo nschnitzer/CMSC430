@@ -1,4 +1,5 @@
 UNAME := $(shell uname)
+
 ifeq ($(UNAME), Darwin)
   format=macho64
   CC=arch -x86_64 gcc
@@ -8,8 +9,8 @@ else
 endif
 
 objs = \
-    main.o \
-    print.o
+	main.o \
+	print.o
 
 default: runtime.o
 
@@ -18,6 +19,7 @@ runtime.o: $(objs)
 
 %.run: %.o runtime.o
 	$(CC) runtime.o $< -o $@
+
 .c.o:
 	$(CC) -fPIC -c -g -o $@ $<
 
@@ -31,4 +33,4 @@ clean:
 	rm *.o *.s *.run
 
 %.test: %.run %.rkt
-    @test "$(shell ./$(<))" = "$(shell racket $(word 2,$^))"
+	@test "$(shell ./$(<))" = "$(shell racket $(word 2,$^))"
