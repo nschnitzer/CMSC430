@@ -33,6 +33,10 @@
     [(Lam f xs e1)      (cons e (lambdas-e e1))]
     [(Match e ps es)    (append (lambdas-e e) (append-map lambdas-e es))]
     [(ExcMgr hdlrs e)   (append (append-map lambdas-e hdlrs) (lambdas-e e))]
-    [(Handler p f)      (append (lambdas-e p) (lambdas-e f))]
+    [(Handler p f)      (append (lambdas-special p) (lambdas-special f))]
     [(Raise e)          (lambdas-e e)]
     [_                  '()]))
+
+(define (lambdas-special l)
+  (match l
+    [(Lam f _ e) (cons (Lam f '() e) (lambdas-e e))]))

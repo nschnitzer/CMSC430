@@ -1,5 +1,5 @@
 #lang racket
 
 (with-handlers
-    ([string?  (lambda (x) (cons "got" x))])
+    ([zero?  (lambda (x) x)])
   (raise "x"))

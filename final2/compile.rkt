@@ -252,7 +252,8 @@
         (success     (gensym 'raise))
         (ret-pred    (gensym 'ret))
         (r           (gensym 'ret)))
-    (seq  (Push 'r15) ;; store callee-saved register... use as a counter
+    (seq  (%% "entering raise")
+          (Push 'r15) ;; store callee-saved register... use as a counter
           (Mov 'r15 0)
 
           (compile-e e (cons #f c) #f) ;; e in rax... Need to stash this somewhere
@@ -264,13 +265,14 @@
           (Je loop-end)
 
           (Lea rax ret-pred)
-          (Push rax) ;; put return label on stack
-          (Push 'rcx) ;; put val of e on top of stack
-          (Mov rax (Offset r12 8)) ;; Get the code label
+          (Push rax)
+          (Push 'rcx) ;; put return label on stack
+          ;;; (Push 'rcx) ;; put val of e on top of stack
+          (Mov rax (Offset r12 -16)) ;; Get the code label
           (Jmp rax)
           (Label ret-pred)
           (Cmp rax val-true)
-          (Jne success) ;; if the predicate returns true
+          (Je success) ;; if the predicate returns true
 
           (Cmp rax val-false)
           (Jne loop-end) ;; neither true or false... not a predicate
@@ -289,12 +291,12 @@
           (Lea rax r)
           (Push rax) ;; put return address on stack
           (Push 'rcx) ;; put val e on top of stack
-          (Mov rax (Offset r12 0)) ;; get code label
+          (Mov rax (Offset r12 -8)) ;; get code label
           (Jmp rax)
           (Label r)
           (Pop 'rcx)
           (Pop 'r15)
-          (Ret)
+          
           )
     ))
 
@@ -352,23 +354,20 @@
   (let ((fvs (fv (Lam f xs e))))
     (seq  (Lea rax (symbol->label f))
           (Mov (Offset r12 0) rax)
-          (hdlr-free-vars-to-heap fvs c 8)
-          (Mov rax r12) ; return value
+          (free-vars-to-heap fvs c 8)
+          (Mov rax rbx) ; return value
           (Or rax type-proc)
-          (Add r12 (* 8 (add1 (length fvs))))
+          (Add rbx (* 8 (add1 (length fvs))))
+          (Add r12 8)
           )))
 
 (define (compile-handler pred func c t?)
   (match pred
-    [(Lam p xs e) (seq (compile-lam p xs e c)
+    [(Lam p xs e) (seq (compile-hdlr-lam p xs e c)
                        (match func
-                         [(Lam f xs e)  (seq (compile-lam f xs e c)
-                                             (Lea rax (symbol->label p))
-                                             (Mov (Offset r12 0) rax)
-                                             (Lea rax (symbol->label f))
-                                             (Mov (Offset r12 8) rax)
+                         [(Lam f xs e)  (seq (compile-hdlr-lam f xs e c)
                                              (Add r14 1)
-                                             (Add r12 16))]
+                         )]
                          [_ (seq (Jmp 'raise_error_align))]))]
     [_ (seq (Jmp 'raise_error_align))]))
 
