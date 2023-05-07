@@ -1,6 +1,6 @@
 #lang racket
 (require "ast.rkt")
-(provide lambdas)
+(provide lambdas lambdas-e)
 
 
 ;; Prog -> [Listof Lam]
@@ -33,7 +33,7 @@
     [(Lam f xs e1)      (cons e (lambdas-e e1))]
     [(Match e ps es)    (append (lambdas-e e) (append-map lambdas-e es))]
     [(ExcMgr hdlrs e)   (append (append-map lambdas-e hdlrs) (lambdas-e e))]
-    [(Handler p f)      (append (lambdas-special p) (lambdas-special f))]
+    [(Handler p f)      (append (lambdas-e p) (lambdas-e f))]
     [(Raise e)          (lambdas-e e)]
     [_                  '()]))
 

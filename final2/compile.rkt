@@ -258,13 +258,14 @@
 
           (compile-e e (cons #f c) #f) ;; e in rax... Need to stash this somewhere
           (Push 'rcx)
-          (Mov 'rcx rax) ;; stashed in ecx
+          (Mov 'rcx rax) ;; stashed in rcx
 
           (Label loop-begin)
           (Cmp 'r15 r14)
           (Je loop-end)
 
           (Lea rax ret-pred)
+          (Push rax)
           (Push rax)
           (Push 'rcx) ;; put return label on stack
           ;;; (Push 'rcx) ;; put val of e on top of stack
@@ -290,6 +291,7 @@
           (Label success)
           (Lea rax r)
           (Push rax) ;; put return address on stack
+          (Push rax)
           (Push 'rcx) ;; put val e on top of stack
           (Mov rax (Offset r12 -8)) ;; get code label
           (Jmp rax)
@@ -354,6 +356,7 @@
   (let ((fvs (fv (Lam f xs e))))
     (seq  (Lea rax (symbol->label f))
           (Mov (Offset r12 0) rax)
+          (Mov (Offset rbx 0) rax)
           (free-vars-to-heap fvs c 8)
           (Mov rax rbx) ; return value
           (Or rax type-proc)
