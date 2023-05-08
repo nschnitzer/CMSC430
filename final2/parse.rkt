@@ -67,14 +67,20 @@
 (define (parse-handler hdlr)
   (match hdlr
     [(list x y)
-     (Handler (parse-predicate x) (parse-e y))]
+     (match (parse-e y)
+       [(Lam f xs e)
+        (if (eq? (length xs) 1)
+            (Handler (parse-predicate x) (Lam f xs e))
+            ("error parsing handler (lambda function must take 1 argument)"))]
+       [_  ("error parsing handler (function is not a lambda)")])]
     [_  (error "error parsing handler")]))
 
 (define (parse-predicate p)
   (match p
     [(list (or 'lambda 'λ) xs e) ;; Accepts a lambda
-     (if (and (list? xs)
-              (andmap symbol? xs))
+     (if (and (and (list? xs)
+                   (andmap symbol? xs))
+              (eq? (length xs) 1)) ;; must only take 1 argument
          (Lam (gensym 'lambdaPreicated) xs (parse-e e))
          (error "parse lambda in parse-predicate error"))]
 
