@@ -133,7 +133,7 @@
                    (if res 
                        res 
                        (catch-error e xs)))]
-    [_  'err_catch-error]))
+    [_  (list 'err_catch-error hs)]))
 
 ;; Value [Listof Pat] [Listof Expr] Env Defns -> Answer
 (define (interp-match v ps es r ds hs)

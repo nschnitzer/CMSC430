@@ -84,7 +84,7 @@
               (Mov rax (Offset rsp (* 8 (length xs))))
               (Xor rax type-proc)
               (copy-env-to-stack fvs 8)
-              (compile-e e env #t)
+              (compile-e e env #f)
               (Add rsp (* 8 (length env))) ; pop env
               (Ret)))])))
 
@@ -298,6 +298,7 @@
           (Label r)
           (Pop 'rcx)
           (Pop 'r15)
+          (Sub r12 16)
           
           )
     ))
