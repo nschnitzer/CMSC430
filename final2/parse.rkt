@@ -67,15 +67,19 @@
 (define (parse-handler hdlr)
   (match hdlr
     [(list x y)
-     (Handler (parse-predicate x) (parse-e y))]
+      (match (parse-e y)
+        [(Lam f xs e)   (if (eq? (length xs) 1)
+                            (Handler (parse-predicate x) (Lam f xs e))
+                            (error "Need to provide a lambda taking 1 arg for the handler"))]
+        [_ (error "Need to provide a lambda taking 1 arg for the handler")])]
     [_  (error "error parsing handler")]))
 
 (define (parse-predicate p)
   (match p
     [(list (or 'lambda 'λ) xs e) ;; Accepts a lambda
-     (if (and (list? xs)
-              (andmap symbol? xs))
-         (Lam (gensym 'lambdaPreicated) xs (parse-e e))
+     (if (and (and (list? xs)
+              (andmap symbol? xs)) (eq? (length xs) 1))
+         (Lam (gensym 'lambdaPreicate) xs (parse-e e))
          (error "parse lambda in parse-predicate error"))]
 
     [(? (op? op1) p) (if (is-pred? p) ;; using a predicate
@@ -88,7 +92,7 @@
     [(? (op? op2)) (error "Not a valid predicate...2")]
     [(? symbol?) (let ((lamName (gensym 'lambdaPredicate))
                        (pname   (gensym 'lambdaPredicate)))
-                   (Lam lamName (list pname) (App (Var p) (Var pname))))] ;; if its calling a function
+                   (Lam lamName (cons pname '()) (App (Var p) (list (Var pname)))))] ;; if its calling a function
 
     [_ (error "not a valid predicate...3")]
     ))
