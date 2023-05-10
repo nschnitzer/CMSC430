@@ -259,6 +259,7 @@
           (compile-e e (cons #f c) #f) ;; e in rax... Need to stash this somewhere
           (Push 'rcx)
           (Mov 'rcx rax) ;; stashed in rcx
+          
 
           (Label loop-begin)
           (Cmp 'r15 r14)
@@ -266,10 +267,16 @@
 
           (Lea rax ret-pred)
           (Push rax)
+          
+          (Mov rax (Offset r12 -16))
+          (Xor rax type-proc)
           (Push rax)
-          (Push 'rcx) ;; put return label on stack
+
+          (Push 'rcx)
           ;;; (Push 'rcx) ;; put val of e on top of stack
-          (Mov rax (Offset r12 -16)) ;; Get the code label
+          
+          (Mov rax (Offset r12 -16))
+          (Mov rax (Offset rax 0));; get the code label
           (Jmp rax)
           (Label ret-pred)
           (Cmp rax val-true)
@@ -291,13 +298,21 @@
           (Label success)
           (Lea rax r)
           (Push rax) ;; put return address on stack
-          (Push rax)
-          (Push 'rcx) ;; put val e on top of stack
+
           (Mov rax (Offset r12 -8)) ;; get code label
+          (Xor rax type-proc)
+          (Push rax)
+
+          (Push 'rcx) ;; put val e on top of stack
+
+          (Mov rax (Offset r12 -8))
+          (Mov rax (Offset rax 0))
           (Jmp rax)
+
           (Label r)
           (Pop 'rcx)
           (Pop 'r15)
+          (Sub r12 16)
           
           )
     ))
@@ -355,11 +370,12 @@
 (define (compile-hdlr-lam f xs e c)
   (let ((fvs (fv (Lam f xs e))))
     (seq  (Lea rax (symbol->label f))
-          (Mov (Offset r12 0) rax)
+          
           (Mov (Offset rbx 0) rax)
           (free-vars-to-heap fvs c 8)
           (Mov rax rbx) ; return value
           (Or rax type-proc)
+          (Mov (Offset r12 0) rbx)
           (Add rbx (* 8 (add1 (length fvs))))
           (Add r12 8)
           )))

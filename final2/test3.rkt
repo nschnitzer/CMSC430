@@ -10,6 +10,6 @@
       (even? (sub1 x))))
 
 (with-handlers
-    [even?   "even"]
-    [odd?    "odd"]
-  (raise 22))
+    ([even?   (lambda (x) "even")]
+     [odd?    (lambda (x) "odd")])
+    (raise 22))
