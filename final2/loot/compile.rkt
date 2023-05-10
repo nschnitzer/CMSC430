@@ -266,15 +266,14 @@
           (Je loop-end)
 
           (Lea rax ret-pred)
-          (Push rax)
+          (Push rax) ;; Put return address on stack
           
           (Mov rax (Offset r12 -16))
           (Xor rax type-proc)
-          (Push rax)
+          (Push rax) ;; Put closure on stack
 
-          (Push 'rcx)
-          ;;; (Push 'rcx) ;; put val of e on top of stack
-          
+          (Push 'rcx) ;; Put arg on stack
+
           (Mov rax (Offset r12 -16))
           (Mov rax (Offset rax 0));; get the code label
           (Jmp rax)
@@ -301,9 +300,9 @@
 
           (Mov rax (Offset r12 -8)) ;; get code label
           (Xor rax type-proc)
-          (Push rax)
+          (Push rax) ;; Put closure on stack
 
-          (Push 'rcx) ;; put val e on top of stack
+          (Push 'rcx) ;; put arg on stack
 
           (Mov rax (Offset r12 -8))
           (Mov rax (Offset rax 0))
@@ -375,7 +374,7 @@
           (free-vars-to-heap fvs c 8)
           (Mov rax rbx) ; return value
           (Or rax type-proc)
-          (Mov (Offset r12 0) rbx)
+          (Mov (Offset r12 0) rbx) ;; Put address on the handler stack
           (Add rbx (* 8 (add1 (length fvs))))
           (Add r12 8)
           )))
@@ -403,15 +402,6 @@
        (Sub r12 (* 8 (length hdlrs))) ;; Get rid of exception handlers
        (Sub r14 'rcx)))
 
-;; [Listof Id] CEnv Int -> Asm
-;; Copy the values of the given free variables into the handler space at the given offset  
-(define (hdlr-free-vars-to-heap fvs c off)
-  (match fvs
-    ['()  (seq)]
-    [(cons x fvs)
-      (seq (Mov r8 (Offset rsp (lookup x c)))
-           (Mov (Offset r12 off) r8)
-           (hdlr-free-vars-to-heap fvs c (+ off 8)))]))
 
 ;; [Listof Id] CEnv Int -> Asm
 ;; Copy the values of given free variables into the heap at given offset

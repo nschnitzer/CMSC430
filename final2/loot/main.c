@@ -38,5 +38,6 @@ int main(int argc, char** argv)
     putchar('\n');
 
   free(heap);
+  free(handler_space);
   return 0;
 }

@@ -1,6 +1,6 @@
 #lang racket
 (require "ast.rkt")
-(provide fv fv*)
+(provide fv)
 
 ;; Expr -> [Listof Id]
 ;; List all of the free variables in e

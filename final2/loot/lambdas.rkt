@@ -36,7 +36,3 @@
     [(Handler p f)      (append (lambdas-e p) (lambdas-e f))]
     [(Raise e)          (lambdas-e e)]
     [_                  '()]))
-
-(define (lambdas-special l)
-  (match l
-    [(Lam f _ e) (cons (Lam f '() e) (lambdas-e e))]))
